@@ -120,7 +120,9 @@ public class SignUpSteps {
 
     public void captureScreenshot(String fileName) throws Exception {
         File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        Files.copy(src.toPath(), Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
+        String destinationPath = "test-output/" + fileName;
+        Files.createDirectories(Paths.get("test-output"));
+        Files.copy(src.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
     }
 
     @After
