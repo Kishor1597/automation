@@ -67,6 +67,57 @@ public class SignUpSteps {
                 actualMessage.contains(expectedMessage));
     }
 
+    @Given("I navigate to the Magento login page")
+    public void navigate_to_login() {
+        driver.get("https://magento.softwaretestingboard.com/");
+        driver.manage().window().maximize();
+        driver.findElement(By.linkText("Sign In")).click();
+        loginPage = new LoginPage(driver);
+    }
+
+    @When("I enter valid credentials")
+    public void enter_credentials() {
+        loginPage.login(registeredEmail, "Password@123");
+    }
+
+    @Then("I should be logged in successfully")
+    public void login_successful() throws Exception {
+        Thread.sleep(3000);
+        String welcomeText = driver.findElement(By.cssSelector("div.panel.header > ul > li.greet.welcome")).getText();
+        boolean isLoggedIn = welcomeText.contains("Welcome");
+        captureScreenshot("login_success.png");
+        Assert.assertTrue("Login failed or welcome message not found", isLoggedIn);
+    }
+
+    @When("I fill in the registration form with already registered email")
+    public void fill_form_existing_email() {
+        signUpPage = new SignUpPage(driver);
+        signUpPage.fillForm("Kishor", "Kumar", registeredEmail, "Password@123");
+    }
+
+    @Then("I should see an account already exists error")
+    public void verify_account_exists_error() throws Exception {
+        Thread.sleep(2000);
+        String errorText = driver.findElement(By.cssSelector("div.message-error.error.message")).getText();
+        Assert.assertTrue("Error not shown", errorText.contains("There is already an account with this email address"));
+        captureScreenshot("signup_existing_email.png");
+    }
+
+    @When("I enter invalid login credentials")
+    public void enter_invalid_credentials() {
+        loginPage = new LoginPage(driver);
+        loginPage.login("invaliduser@test.com", "WrongPassword");
+    }
+
+    @Then("I should see an invalid login error")
+    public void verify_invalid_login_error() throws Exception {
+        Thread.sleep(2000);
+        String errorText = driver.findElement(By.cssSelector("div.message-error.error.message")).getText();
+        Assert.assertTrue("Login error not shown", errorText.contains("The account sign-in was incorrect"));
+        captureScreenshot("invalid_login.png");
+    }
+
+
     public void captureScreenshot(String fileName) throws Exception {
         File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         Files.copy(src.toPath(), Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
