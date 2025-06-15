@@ -1,0 +1,14 @@
+# Java
+*.class
+*.log
+*.iml
+*.ipr
+*.iws
+.idea/
+test-output/
+*.png
+*.mp4
+
+# OS
+.DS_Store
+Thumbs.db
